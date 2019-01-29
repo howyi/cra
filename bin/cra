@@ -10,6 +10,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 
 $app = new Symfony\Component\Console\Application;
 
-$app->add(new Howyi\Cra\TestCommand());
+$app->add(new Howyi\Cra\Console\InitCommand());
+$app->add(new Howyi\Cra\Console\PrepareReleaseBranchCommand());
+$app->add(new Howyi\Cra\Console\ReleaseCommand());
 
 $app->run();
