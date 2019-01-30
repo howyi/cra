@@ -2,23 +2,31 @@
 
 namespace Howyi\Cra;
 
+use Symfony\Component\Yaml\Yaml;
+
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
+    private const FILE_NAME = 'testConfig.yml';
+
+    private const CONFIG = [
+        'host' => 'github',
+        'hooks' => [
+            'onBeforeRelease' => [
+                'hello',
+                'world',
+            ],
+
+        ]
+    ];
+
     protected function setup()
     {
-        $config = [
-            'host' => 'github',
-            'hooks' => [
-                'onBeforeRelease' => 'hello',
-            ]
-        ];
-
-        file_put_contents('testConfig.yml', \Symfony\Component\Yaml\Yaml::dump($config));
+        file_put_contents(self::FILE_NAME, Yaml::dump(self::CONFIG));
     }
 
     protected function tearDown()
     {
-        unlink('testConfig.yml');
+        unlink(self::FILE_NAME);
     }
 
     /**
@@ -32,11 +40,11 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @depends testGetWhenConfigNotLoaded
-     * @doesNotPerformAssertions
      */
     public function testSet(): void
     {
-        Config::set('testConfig.yml');
+        Config::set(self::FILE_NAME);
+        self::assertSame(self::CONFIG['host'], Config::host());
     }
 
     /**
@@ -46,8 +54,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetWhenAlreadyLoaded(): void
     {
-        Config::set('testConfig.yml');
-        Config::set('testConfig.yml');
+        Config::set(self::FILE_NAME);
+        Config::set(self::FILE_NAME);
     }
 
     /**
@@ -55,7 +63,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testGet(): void
     {
-        self::assertSame('github', Config::host());
-        self::assertSame('hello', Config::hooks('onBeforeRelease'));
+        self::assertSame(self::CONFIG['host'], Config::host());
+        self::assertSame(self::CONFIG['hooks'], Config::hooks());
+        self::assertSame(self::CONFIG['hooks']['onBeforeRelease'], Config::hooks('onBeforeRelease'));
+        self::assertSame(self::CONFIG['hooks']['onBeforeRelease'][0], Config::hooks('onBeforeRelease', 0));
     }
 }
