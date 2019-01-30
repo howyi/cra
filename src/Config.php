@@ -10,7 +10,7 @@ class Config
 
     /**
      * @param string $path
-     * @throws \ErrorException
+     * @throws \RuntimeException
      * @throws \Howyi\InvalidFileException
      */
     final public static function set(string $path): void
