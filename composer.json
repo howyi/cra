@@ -31,7 +31,8 @@
         "symfony/console": ">=2.0",
         "composer/semver": "^1.4",
         "czproject/git-php": "^3.16",
-        "howyi/evi": "^1.0"
+        "howyi/evi": "^1.0",
+        "myclabs/php-enum": "^1.6"
     },
     "autoload": {
         "psr-4": {
