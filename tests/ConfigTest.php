@@ -2,12 +2,19 @@
 
 namespace Howyi\Cra;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends TestCase
 {
+    /**
+     * @var string
+     */
     private const FILE_NAME = 'testConfig.yml';
 
+    /**
+     * @var array
+     */
     private const CONFIG = [
         'host' => 'github',
         'hooks' => [
