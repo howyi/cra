@@ -10,6 +10,7 @@ class VersionAscIteratorTest extends TestCase
     {
         $iterator = new VersionAscIterator(
             Version::released(1, 0, 1),
+            Version::released(1, 0, 0),
             Version::wip(1, 2, 0),
             Version::released(1, 1, 1),
             Version::released(1, 0, 0),
@@ -20,6 +21,7 @@ class VersionAscIteratorTest extends TestCase
         );
 
         $expected = [
+            Version::released(1, 0, 0),
             Version::released(1, 0, 0),
             Version::released(1, 0, 1),
             Version::released(1, 0, 2),
