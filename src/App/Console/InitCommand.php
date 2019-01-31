@@ -1,6 +1,6 @@
 <?php
 
-namespace Howyi\Cra\Console;
+namespace Howyi\Cra\App\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
