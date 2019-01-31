@@ -4,6 +4,7 @@ php:
 before_script:
   - composer install --dev
 script:
-  - vendor/bin/phpstan analyse -l 7 src
+  - composer stan
   - vendor/bin/phpunit --coverage-clover=build/log/clover.xml
-  - vendor/bin/phpcs --standard=PSR12 src
+  - composer cs
+  - vendor/bin/php-coveralls -v
