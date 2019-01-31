@@ -4,8 +4,14 @@ namespace Howyi\Cra;
 
 use Howyi\Evi;
 
+/**
+ * Config
+ */
 class Config
 {
+    /**
+     * @var array|null
+     */
     private static $config = null;
 
     /**
