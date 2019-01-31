@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\Domain\Version;
+namespace Howyi\Cra\Core;
 
 /**
  * Version
