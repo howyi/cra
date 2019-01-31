@@ -1,5 +1,6 @@
 # cra
 [![Build Status](https://travis-ci.org/howyi/cra.svg?branch=master)](https://travis-ci.org/howyi/cra)
+[![Coverage Status](https://coveralls.io/repos/github/howyi/cra/badge.svg?branch=master)](https://coveralls.io/github/howyi/cra?branch=master)
 
 ## sub-commands
 
