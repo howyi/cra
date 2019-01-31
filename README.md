@@ -1,6 +1,8 @@
-# cra
-[![Build Status](https://travis-ci.org/howyi/cra.svg?branch=master)](https://travis-ci.org/howyi/cra)
-[![Coverage Status](https://coveralls.io/repos/github/howyi/cra/badge.svg?branch=master)](https://coveralls.io/github/howyi/cra?branch=master)
+# cra [![Build Status Badge]][Build Status] [![Coverage Status Badge]][Coverage Status]
+[Build Status]: https://travis-ci.org/sasamium/cra
+[Build Status Badge]: https://travis-ci.org/sasamium/cra.svg?branch=master
+[Coverage Status]: https://coveralls.io/github/sasamium/cra?branch=master
+[Coverage Status Badge]: https://coveralls.io/repos/github/sasamium/cra/badge.svg?branch=master
 
 ## sub-commands
 
