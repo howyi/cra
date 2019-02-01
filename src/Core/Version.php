@@ -42,11 +42,21 @@ class Version
     }
 
     /**
+     * 一番最初のバージョンを生成する
+     *
+     * @return Version
+     */
+    public static function initial(): Version
+    {
+        return new self(0, 0, 0, false);
+    }
+
+    /**
      * リリース済みバージョンを生成する
      *
-     * @param int  $major
-     * @param int  $minor
-     * @param int  $patch
+     * @param int $major
+     * @param int $minor
+     * @param int $patch
      * @return Version
      */
     public static function released(int $major, int $minor, int $patch): Version
@@ -57,14 +67,44 @@ class Version
     /**
      * 開発中バージョンを生成する
      *
-     * @param int  $major
-     * @param int  $minor
-     * @param int  $patch
+     * @param int $major
+     * @param int $minor
+     * @param int $patch
      * @return Version
      */
     public static function wip(int $major, int $minor, int $patch): Version
     {
         return new self($major, $minor, $patch, false);
+    }
+
+    /**
+     * メジャーバージョン番号を返す
+     *
+     * @return int
+     */
+    public function major(): int
+    {
+        return $this->major;
+    }
+
+    /**
+     * マイナーバージョン番号を返す
+     *
+     * @return int
+     */
+    public function minor(): int
+    {
+        return $this->minor;
+    }
+
+    /**
+     * パッチバージョン番号を返す
+     *
+     * @return int
+     */
+    public function patch(): int
+    {
+        return $this->patch;
     }
 
     /**
