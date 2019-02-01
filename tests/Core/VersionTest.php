@@ -6,6 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class VersionTest extends TestCase
 {
+    public function setup()
+    {
+        Version::setVersionPrefix('v');
+        Version::setReleaseBranchPrefix('release/');
+    }
+
     public function testInitial()
     {
         $version = Version::initial();
@@ -70,11 +76,11 @@ class VersionTest extends TestCase
 
     public function testToString()
     {
-        $this->assertSame('1.2.3', Version::released(1, 2, 3)->toString());
+        $this->assertSame('v1.2.3', Version::released(1, 2, 3)->toString());
     }
 
     public function testToReleaseBranchName()
     {
-        $this->assertSame('release/1.2.3', Version::released(1, 2, 3)->toReleaseBranchName());
+        $this->assertSame('release/v1.2.3', Version::released(1, 2, 3)->toReleaseBranchName());
     }
 }
