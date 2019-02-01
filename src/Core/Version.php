@@ -28,6 +28,16 @@ class Version
     private $isReleased;
 
     /**
+     * @var string
+     */
+    private static $versionPrefix = '';
+
+    /**
+     * @var string
+     */
+    private static $releaseBranchPrefix = '';
+
+    /**
      * @param int  $major
      * @param int  $minor
      * @param int  $patch
@@ -42,11 +52,21 @@ class Version
     }
 
     /**
+     * 一番最初のバージョンを生成する
+     *
+     * @return Version
+     */
+    public static function initial(): Version
+    {
+        return new self(0, 0, 0, false);
+    }
+
+    /**
      * リリース済みバージョンを生成する
      *
-     * @param int  $major
-     * @param int  $minor
-     * @param int  $patch
+     * @param int $major
+     * @param int $minor
+     * @param int $patch
      * @return Version
      */
     public static function released(int $major, int $minor, int $patch): Version
@@ -57,14 +77,64 @@ class Version
     /**
      * 開発中バージョンを生成する
      *
-     * @param int  $major
-     * @param int  $minor
-     * @param int  $patch
+     * @param int $major
+     * @param int $minor
+     * @param int $patch
      * @return Version
      */
     public static function wip(int $major, int $minor, int $patch): Version
     {
         return new self($major, $minor, $patch, false);
+    }
+
+    /**
+     * バージョン文字列の接頭辞をセットする
+     *
+     * @param string $versionPrefix
+     */
+    public static function setVersionPrefix(string $versionPrefix): void
+    {
+        self::$versionPrefix = $versionPrefix;
+    }
+
+    /**
+     * リリースブランチ文字列の接頭辞をセットする
+     *
+     * @param string $releaseBranchPrefix
+     */
+    public static function setReleaseBranchPrefix(string $releaseBranchPrefix): void
+    {
+        self::$releaseBranchPrefix = $releaseBranchPrefix;
+    }
+
+    /**
+     * メジャーバージョン番号を返す
+     *
+     * @return int
+     */
+    public function major(): int
+    {
+        return $this->major;
+    }
+
+    /**
+     * マイナーバージョン番号を返す
+     *
+     * @return int
+     */
+    public function minor(): int
+    {
+        return $this->minor;
+    }
+
+    /**
+     * パッチバージョン番号を返す
+     *
+     * @return int
+     */
+    public function patch(): int
+    {
+        return $this->patch;
     }
 
     /**
@@ -122,9 +192,7 @@ class Version
      */
     public function toString(): string
     {
-        // TODO: 844196 設定ファイルを参照するようにする
-        $versionPrefix = '';
-        return sprintf('%s%d.%d.%d', $versionPrefix, $this->major, $this->minor, $this->patch);
+        return sprintf('%s%d.%d.%d', self::$versionPrefix, $this->major, $this->minor, $this->patch);
     }
 
     /**
@@ -134,9 +202,6 @@ class Version
      */
     public function toReleaseBranchName(): string
     {
-        // TODO: 844196 設定ファイルを参照するようにする
-        $branchPrefix = 'release/';
-        $versionPrefix = '';
-        return sprintf('%s%s%s', $branchPrefix, $versionPrefix, $this->toString());
+        return sprintf('%s%s', self::$releaseBranchPrefix, $this->toString());
     }
 }
