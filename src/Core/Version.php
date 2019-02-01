@@ -168,7 +168,7 @@ class Version
      */
     public function increment(ReleaseType $releaseType): Version
     {
-        switch ($releaseType->getValue()) {
+        switch ($releaseType->value()) {
             case ReleaseType::MAJOR:
                 return new Version($this->major + 1, 0, 0, false);
                 break;
@@ -180,7 +180,7 @@ class Version
                 break;
             default:
                 // 本来到達し得ない
-                throw new \LogicException(sprintf('対応していないリリース種別を渡された: %s', $releaseType->getValue()));
+                throw new \LogicException(sprintf('対応していないリリース種別を渡された: %s', $releaseType->value()));
                 break;
         }
     }
