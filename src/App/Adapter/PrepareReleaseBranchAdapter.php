@@ -29,7 +29,8 @@ class PrepareReleaseBranchAdapter implements PrepareReleaseBranchPort
     private $releaseBranchPrefix;
 
     /**
-     * @param IGit $git
+     * @param IGit   $git
+     * @param string $releaseBranchPrefix
      */
     public function __construct(IGit $git, string $releaseBranchPrefix)
     {
