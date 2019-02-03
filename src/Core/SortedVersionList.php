@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\Core;
+namespace Sasamium\Cra\Core;
 
-use Howyi\Cra\Core\Version;
+use Sasamium\Cra\Core\Version;
 
 /**
  * ソート済みバージョンリスト

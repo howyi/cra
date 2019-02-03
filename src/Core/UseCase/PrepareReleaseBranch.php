@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\Core\UseCase;
+namespace Sasamium\Cra\Core\UseCase;
 
-use Howyi\Cra\Core\Version;
-use Howyi\Cra\Core\ReleaseType;
-use Howyi\Cra\Core\Port\PrepareReleaseBranchPort;
+use Sasamium\Cra\Core\Version;
+use Sasamium\Cra\Core\ReleaseType;
+use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
 
 /**
  * リリースブランチを用意する
