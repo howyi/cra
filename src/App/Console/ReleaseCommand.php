@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\App\Console;
+namespace Sasamium\Cra\App\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

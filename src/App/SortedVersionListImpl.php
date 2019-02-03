@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\App;
+namespace Sasamium\Cra\App;
 
-use Howyi\Cra\Core\Version;
-use Howyi\Cra\Core\SortedVersionList;
+use Sasamium\Cra\Core\Version;
+use Sasamium\Cra\Core\SortedVersionList;
 use Composer\Semver\Comparator;
 
 /**

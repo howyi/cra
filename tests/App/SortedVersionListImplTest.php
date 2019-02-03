@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\App;
+namespace Sasamium\Cra\App;
 
-use Howyi\Cra\Core\Version;
+use Sasamium\Cra\Core\Version;
 use PHPUnit\Framework\TestCase;
 
 class SortedVersionListImplTest extends TestCase

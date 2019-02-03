@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\App\Adapter;
+namespace Sasamium\Cra\App\Adapter;
 
 use Cz\Git\IGit;
-use Howyi\Cra\App\SortedVersionListImpl;
-use Howyi\Cra\Core\Port\PrepareReleaseBranchPort;
-use Howyi\Cra\Core\SortedVersionList;
-use Howyi\Cra\Core\Version;
+use Sasamium\Cra\App\SortedVersionListImpl;
+use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
+use Sasamium\Cra\Core\SortedVersionList;
+use Sasamium\Cra\Core\Version;
 
 /**
  * PrepareReleaseBranchPortの実装

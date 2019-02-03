@@ -1,5 +1,5 @@
 {
-    "name": "howyi/cra",
+    "name": "sasamium/cra",
     "description": "Branch based Develop&Release tool",
     "type": "library",
     "license": "MIT",
@@ -36,12 +36,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Howyi\\Cra\\": "src/"
+            "Sasamium\\Cra\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Howyi\\Cra\\": "tests/"
+            "Sasamium\\Cra\\": "tests/"
         }
     },
     "require-dev": {

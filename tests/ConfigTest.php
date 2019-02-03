@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra;
+namespace Sasamium\Cra;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
