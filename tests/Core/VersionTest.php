@@ -2,6 +2,7 @@
 
 namespace Howyi\Cra\Core;
 
+use Eloquent\Enumeration\AbstractValueMultiton;
 use PHPUnit\Framework\TestCase;
 
 class VersionTest extends TestCase
@@ -65,11 +66,11 @@ class VersionTest extends TestCase
      */
     public function testIncrementGivenInvalidReleaseType()
     {
-        // 普通にnewするとMyCLabs\Enum\Enumのチェックが走るため、無理やり書き換える
         $releaseType = ReleaseType::MAJOR();
-        \Closure::bind(function () {
-            $this->value = 'test';
-        }, $releaseType, ReleaseType::class)->__invoke();
+        $reflectionClass = new \ReflectionClass(AbstractValueMultiton::class);
+        $reflectionProperty = $reflectionClass->getProperty('value');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($releaseType, 'test');
 
         Version::released(1, 2, 3)->increment($releaseType);
     }
