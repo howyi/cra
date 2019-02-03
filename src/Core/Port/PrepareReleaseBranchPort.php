@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\Core\Port;
+namespace Sasamium\Cra\Core\Port;
 
-use Howyi\Cra\Core\SortedVersionList;
+use Sasamium\Cra\Core\SortedVersionList;
 
 /**
  * PrepareReleaseBranchPort

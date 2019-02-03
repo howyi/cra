@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Howyi\Cra\Core\UseCase;
+namespace Sasamium\Cra\Core\UseCase;
 
-use Howyi\Cra\Core\Port\PrepareReleaseBranchPort;
-use Howyi\Cra\Core\ReleaseType;
-use Howyi\Cra\Core\SortedVersionList;
-use Howyi\Cra\Core\Version;
+use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
+use Sasamium\Cra\Core\ReleaseType;
+use Sasamium\Cra\Core\SortedVersionList;
+use Sasamium\Cra\Core\Version;
 use Mockery as M;
 use PHPUnit\Framework\TestCase;
 
