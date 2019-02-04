@@ -2,12 +2,10 @@
 
 namespace Sasamium\Cra\Core;
 
-use Sasamium\Cra\Core\Version;
-
 /**
  * ソート済みバージョンリスト
  */
-abstract class SortedVersionList implements \IteratorAggregate
+class SortedVersionList implements \IteratorAggregate
 {
     /**
      * @var Version[]
@@ -19,7 +17,9 @@ abstract class SortedVersionList implements \IteratorAggregate
      */
     public function __construct(Version ...$versions)
     {
-        usort($versions, [$this, 'compare']);
+        usort($versions, function (Version $a, Version $b): int {
+            return $a->equals($b) ? 0 : $a->greaterThan($b) ? 1 : -1;
+        });
         $this->versions = $versions;
     }
 
@@ -48,6 +48,19 @@ abstract class SortedVersionList implements \IteratorAggregate
     }
 
     /**
+     * リスト内の最新バージョンを返す
+     *
+     * リストが空の場合は渡されたバージョンを返す
+     *
+     * @param Version $else
+     * @return Version
+     */
+    public function latestOrElse(Version $else): Version
+    {
+        return $this->latest() ?? $else;
+    }
+
+    /**
      * リリース済みバージョンのみが格納された新しいリストを返す
      *
      * @return SortedVersionList
@@ -70,17 +83,4 @@ abstract class SortedVersionList implements \IteratorAggregate
             return $version->isWip();
         }));
     }
-
-    /**
-     * バージョン番号を比較する
-     *
-     * $a < $b -> -1
-     * $a = $b ->  0
-     * $a > $b ->  1
-     *
-     * @param Version $a
-     * @param Version $b
-     * @return int -1|0|1
-     */
-    abstract protected function compare(Version $a, Version $b): int;
 }

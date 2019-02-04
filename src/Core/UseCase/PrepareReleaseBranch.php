@@ -4,6 +4,7 @@ namespace Sasamium\Cra\Core\UseCase;
 
 use Sasamium\Cra\Core\Version;
 use Sasamium\Cra\Core\ReleaseType;
+use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
 
 /**
@@ -29,19 +30,13 @@ class PrepareReleaseBranch
      */
     public function run(ReleaseType $releaseType): void
     {
-        $latest = $this->port->listUpAllVersion()->released()->latest();
-        if (is_null($latest)) {
-            $latest = Version::initial();
-        }
+        $latest = $this->port->listUpAllVersion()
+            ->released()
+            ->latestOrElse(Version::initial());
 
         $releaseVersion = $latest->increment($releaseType);
-        $releaseBranch = $releaseVersion->toReleaseBranchName();
+        $releaseBranch = ReleaseBranch::of($releaseVersion);
 
-        if ($this->port->existsBranch($releaseBranch)) {
-            return;
-        }
-
-        $this->port->checkoutBranch('master');
-        $this->port->createBranchWithCheckout($releaseBranch);
+        $this->port->checkoutBranch($releaseBranch);
     }
 }
