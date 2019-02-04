@@ -7,10 +7,21 @@ use PHPUnit\Framework\TestCase;
 
 class VersionTest extends TestCase
 {
-    public function setup()
+    public function validStringDataProvider()
     {
-        Version::setVersionPrefix('v');
-        Version::setReleaseBranchPrefix('release/');
+        return [
+            ['1.2.3', true],
+            ['v1.2.3', true],
+            ['foo', false],
+        ];
+    }
+
+    /**
+     * @dataProvider validStringDataProvider
+     */
+    public function testIsValidString($str, $expected)
+    {
+        $this->assertSame($expected, Version::isValidString($str));
     }
 
     public function testInitial()
@@ -33,6 +44,31 @@ class VersionTest extends TestCase
         $this->assertFalse($version->isWip());
     }
 
+    public function releasedVersionStringDataProvider()
+    {
+        return [
+            ['v1.2.3', Version::released(1, 2, 3)],
+            ['1.2.3', Version::released(1, 2, 3)],
+        ];
+    }
+
+    /**
+     * @dataProvider releasedVersionStringDataProvider
+     */
+    public function testReleasedFromString($str, $expected)
+    {
+        $this->assertTrue(Version::releasedFromString($str)->equals($expected));
+    }
+
+    /**
+     * @expectedException \Sasamium\Cra\Core\InvalidVersionStringException
+     * @expectedExceptionMessage given: foo
+     */
+    public function testReleasedFromStringGivenInvalidString()
+    {
+        Version::releasedFromString('foo');
+    }
+
     public function testWip()
     {
         $version = Version::wip(1, 2, 3);
@@ -43,6 +79,31 @@ class VersionTest extends TestCase
         $this->assertTrue($version->isWip());
     }
 
+    public function wipVersionStringDataProvider()
+    {
+        return [
+            ['v1.2.3', Version::wip(1, 2, 3)],
+            ['1.2.3', Version::wip(1, 2, 3)],
+        ];
+    }
+
+    /**
+     * @dataProvider wipVersionStringDataProvider
+     */
+    public function testWipFromString($str, $expected)
+    {
+        $this->assertTrue(Version::wipFromString($str)->equals($expected));
+    }
+
+    /**
+     * @expectedException \Sasamium\Cra\Core\InvalidVersionStringException
+     * @expectedExceptionMessage given: foo
+     */
+    public function testWipFromStringGivenInvalidString()
+    {
+        Version::wipFromString('foo');
+    }
+
     public function expectedIncrementPatternDataProvider()
     {
         return [
@@ -50,6 +111,41 @@ class VersionTest extends TestCase
             'Minor' => [ReleaseType::MINOR(), Version::released(1, 2, 3), Version::wip(1, 3, 0)],
             'Patch' => [ReleaseType::PATCH(), Version::released(1, 2, 3), Version::wip(1, 2, 4)],
         ];
+    }
+
+    public function equalityDataProvider()
+    {
+        return [
+            [Version::wip(1, 2, 3), Version::wip(1, 2, 3), true],
+            [Version::wip(1, 2, 3), Version::wip(1, 2, 4), false],
+            [Version::wip(1, 2, 3), Version::released(1, 2, 3), false],
+            [Version::wip(1, 2, 3), Version::released(1, 2, 4), false],
+        ];
+    }
+
+    /**
+     * @dataProvider equalityDataProvider
+     */
+    public function testEquals($a, $b, $expected)
+    {
+        $this->assertSame($expected, $a->equals($b));
+    }
+
+    public function greaterThanDataProvider()
+    {
+        return [
+            [Version::wip(1, 0, 0), Version::wip(0, 9, 9), true],
+            [Version::wip(1, 0, 0), Version::wip(1, 0, 0), false],
+            [Version::wip(1, 0, 0), Version::wip(1, 0, 1), false],
+        ];
+    }
+
+    /**
+     * @dataProvider greaterThanDataProvider
+     */
+    public function testGreaterThan($a, $b, $expected)
+    {
+        $this->assertSame($expected, $a->greaterThan($b));
     }
 
     /**
@@ -77,11 +173,7 @@ class VersionTest extends TestCase
 
     public function testToString()
     {
-        $this->assertSame('v1.2.3', Version::released(1, 2, 3)->toString());
-    }
-
-    public function testToReleaseBranchName()
-    {
-        $this->assertSame('release/v1.2.3', Version::released(1, 2, 3)->toReleaseBranchName());
+        $this->assertSame('1.2.3', Version::released(1, 2, 3)->toString());
+        $this->assertSame('v1.2.3', Version::released(1, 2, 3)->toString('v'));
     }
 }

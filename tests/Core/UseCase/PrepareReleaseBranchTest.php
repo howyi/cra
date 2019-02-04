@@ -2,12 +2,13 @@
 
 namespace Sasamium\Cra\Core\UseCase;
 
+use Mockery as M;
+use PHPUnit\Framework\TestCase;
 use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
+use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\ReleaseType;
 use Sasamium\Cra\Core\SortedVersionList;
 use Sasamium\Cra\Core\Version;
-use Mockery as M;
-use PHPUnit\Framework\TestCase;
 
 class PrepareReleaseBranchTest extends TestCase
 {
@@ -16,9 +17,6 @@ class PrepareReleaseBranchTest extends TestCase
 
     public function setup()
     {
-        Version::setReleaseBranchPrefix('release/');
-        Version::setVersionPrefix('v');
-
         $this->port = M::mock(PrepareReleaseBranchPort::class);
         $this->useCase = new PrepareReleaseBranch($this->port);
     }
@@ -30,20 +28,17 @@ class PrepareReleaseBranchTest extends TestCase
 
     public function createBranchPatternDataProvider()
     {
-        Version::setReleaseBranchPrefix('release/');
-        Version::setVersionPrefix('v');
-
         $releaseType = ReleaseType::MAJOR();
         return [
             'リリース済みバージョンが存在する' => [
-                Version::released(1, 0, 0),
+                new SortedVersionList(Version::released(1, 0, 0)),
                 $releaseType,
-                Version::released(1, 0, 0)->increment($releaseType)->toReleaseBranchName(),
+                ReleaseBranch::of(Version::released(1, 0, 0)->increment($releaseType)),
             ],
             'リリース済みバージョンが存在しない' => [
-                null,
+                new SortedVersionList(),
                 $releaseType,
-                Version::initial()->increment($releaseType)->toReleaseBranchName(),
+                ReleaseBranch::of(Version::initial()->increment($releaseType)),
             ],
         ];
     }
@@ -52,58 +47,21 @@ class PrepareReleaseBranchTest extends TestCase
      * @dataProvider createBranchPatternDataProvider
      */
     public function testCreateBranch(
-        ?Version $latestVersion,
+        SortedVersionList $versions,
         ReleaseType $releaseType,
-        string $expectedReleaseBranchName
+        ReleaseBranch $expectedReleaseBranch
     ) {
         $this->port->shouldReceive('listUpAllVersion')
             ->once()
             ->withNoArgs()
-            ->andReturn($list = M::mock(SortedVersionList::class));
-
-        $list->shouldReceive('released->latest')
-            ->once()
-            ->andReturn($latestVersion);
-
-        $this->port->shouldReceive('existsBranch')
-            ->once()
-            ->with($expectedReleaseBranchName)
-            ->andReturn(false);
+            ->andReturn($versions);
 
         $this->port->shouldReceive('checkoutBranch')
             ->once()
-            ->with('master')
+            ->with(M::on(function ($given) use ($expectedReleaseBranch) {
+                return $expectedReleaseBranch->equals($given);
+            }))
             ->andReturnNull();
-
-        $this->port->shouldReceive('createBranchWithCheckout')
-            ->once()
-            ->with($expectedReleaseBranchName)
-            ->andReturnNull();
-
-        $this->assertNull($this->useCase->run($releaseType));
-    }
-
-    public function testNoCreateBranch()
-    {
-        $releaseType = ReleaseType::MINOR();
-
-        $this->port->shouldReceive('listUpAllVersion')
-            ->once()
-            ->withNoArgs()
-            ->andReturn($list = M::mock(SortedVersionList::class));
-
-        $list->shouldReceive('released->latest')
-            ->once()
-            ->andReturn($latest = Version::released(1, 0, 0));
-
-        $releaseBranchName = $latest
-            ->increment($releaseType)
-            ->toReleaseBranchName();
-
-        $this->port->shouldReceive('existsBranch')
-            ->once()
-            ->with($releaseBranchName)
-            ->andReturn(true);
 
         $this->assertNull($this->useCase->run($releaseType));
     }

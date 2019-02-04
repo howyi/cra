@@ -8,7 +8,7 @@ class SortedVersionListTest extends TestCase
 {
     public function testGetIterator()
     {
-        $list = new SortedVersionListDummyImpl(
+        $list = new SortedVersionList(
             Version::wip(4, 0, 0),
             Version::wip(1, 0, 0),
             Version::wip(3, 0, 0),
@@ -27,22 +27,31 @@ class SortedVersionListTest extends TestCase
 
     public function testLatest()
     {
-        $list = new SortedVersionListDummyImpl(Version::wip(1, 0, 0), Version::wip(2, 0, 0));
+        $listA = new SortedVersionList(Version::wip(1, 0, 0), Version::wip(2, 0, 0));
+        $this->assertEquals(Version::wip(2, 0, 0), $listA->latest());
 
-        $expected = Version::wip(2, 0, 0);
-        $actual = $list->latest();
-        $this->assertEquals($expected, $actual);
+        $listB = new SortedVersionList();
+        $this->assertNull($listB->latest());
+    }
+
+    public function testLatestOrElse()
+    {
+        $listA = new SortedVersionList(Version::wip(1, 0, 0), Version::wip(2, 0, 0));
+        $this->assertEquals(Version::wip(2, 0, 0), $listA->latestOrElse(Version::initial()));
+
+        $listB = new SortedVersionList();
+        $this->assertEquals(Version::initial(), $listB->latestOrElse(Version::initial()));
     }
 
     public function testReleased()
     {
-        $list = new SortedVersionListDummyImpl(
+        $list = new SortedVersionList(
             Version::released(2, 0, 0),
             Version::wip(3, 0, 0),
             Version::released(1, 0, 0)
         );
 
-        $expected = new SortedVersionListDummyImpl(
+        $expected = new SortedVersionList(
             Version::released(1, 0, 0),
             Version::released(2, 0, 0)
         );
@@ -52,13 +61,13 @@ class SortedVersionListTest extends TestCase
 
     public function testWip()
     {
-        $list = new SortedVersionListDummyImpl(
+        $list = new SortedVersionList(
             Version::wip(4, 0, 0),
             Version::released(2, 0, 0),
             Version::wip(3, 0, 0)
         );
 
-        $expected = new SortedVersionListDummyImpl(
+        $expected = new SortedVersionList(
             Version::wip(3, 0, 0),
             Version::wip(4, 0, 0)
         );

@@ -2,11 +2,18 @@
 
 namespace Sasamium\Cra\Core;
 
+use Composer\Semver\Comparator;
+
 /**
  * Version
  */
 class Version
 {
+    /**
+     * @var string
+     */
+    private const SEMVER_PATTERN = '/^v?(\d+)\.(\d+)\.(\d+)/';
+
     /**
      * @var int
      */
@@ -28,16 +35,6 @@ class Version
     private $isReleased;
 
     /**
-     * @var string
-     */
-    private static $versionPrefix = '';
-
-    /**
-     * @var string
-     */
-    private static $releaseBranchPrefix = '';
-
-    /**
      * @param int  $major
      * @param int  $minor
      * @param int  $patch
@@ -49,6 +46,17 @@ class Version
         $this->minor = $minor;
         $this->patch = $patch;
         $this->isReleased = $isReleased;
+    }
+
+    /**
+     * 正当なバージョン文字列かを返す
+     *
+     * @param string $str
+     * @return bool
+     */
+    public static function isValidString(string $str): bool
+    {
+        return count(self::parse($str)) > 0;
     }
 
     /**
@@ -75,6 +83,22 @@ class Version
     }
 
     /**
+     * バージョン文字列からリリース済みバージョンを生成する
+     *
+     * @param string $str
+     * @throws InvalidVersionStringException
+     * @return Version
+     */
+    public static function releasedFromString(string $str): Version
+    {
+        $parsed = self::parse($str);
+        if (count($parsed) === 0) {
+            throw new InvalidVersionStringException(sprintf('given: %s', $str));
+        }
+        return self::released($parsed['major'], $parsed['minor'], $parsed['patch']);
+    }
+
+    /**
      * 開発中バージョンを生成する
      *
      * @param int $major
@@ -88,23 +112,35 @@ class Version
     }
 
     /**
-     * バージョン文字列の接頭辞をセットする
+     * バージョン文字列から開発中バージョンを生成する
      *
-     * @param string $versionPrefix
+     * @param string $str
+     * @throws InvalidVersionStringException
+     * @return Version
      */
-    public static function setVersionPrefix(string $versionPrefix): void
+    public static function wipFromString(string $str): Version
     {
-        self::$versionPrefix = $versionPrefix;
+        $parsed = self::parse($str);
+        if (count($parsed) === 0) {
+            throw new InvalidVersionStringException(sprintf('given: %s', $str));
+        }
+        return self::wip($parsed['major'], $parsed['minor'], $parsed['patch']);
     }
 
     /**
-     * リリースブランチ文字列の接頭辞をセットする
+     * 文字列をパースし、正当であれば各セグメントを返す
      *
-     * @param string $releaseBranchPrefix
+     * @param string $str
+     * @return array ['major' => int, 'minor' => int, 'patch' => int]|[]
      */
-    public static function setReleaseBranchPrefix(string $releaseBranchPrefix): void
+    private static function parse(string $str): array
     {
-        self::$releaseBranchPrefix = $releaseBranchPrefix;
+        $m = [];
+        $result = preg_match(self::SEMVER_PATTERN, $str, $m);
+        if ($result !== 1) {
+            return [];
+        }
+        return ['major' => (int) $m[1], 'minor' => (int) $m[2], 'patch' => (int) $m[3]];
     }
 
     /**
@@ -158,6 +194,31 @@ class Version
     }
 
     /**
+     * 渡されたバージョンが自身と等しいかを返す
+     *
+     * @param Version $other
+     * @return bool
+     */
+    public function equals(Version $other): bool
+    {
+        if ($this->isReleased !== $other->isReleased) {
+            return false;
+        }
+        return Comparator::equalTo($this->toString(), $other->toString());
+    }
+
+    /**
+     * 自身が渡されたバージョンより新しいかを返す
+     *
+     * @param Version $other
+     * @return bool
+     */
+    public function greaterThan(Version $other): bool
+    {
+        return Comparator::greaterThan($this->toString(), $other->toString());
+    }
+
+    /**
      * リリース種別に対応したバージョン番号をインクリメントした新しいバージョンを返す
      *
      * インクリメントされた新しいバージョンは常に「開発中」となる
@@ -188,20 +249,11 @@ class Version
     /**
      * このバージョンの文字列表現を返す
      *
+     * @param string $prefix default: ''
      * @return string
      */
-    public function toString(): string
+    public function toString(string $prefix = ''): string
     {
-        return sprintf('%s%d.%d.%d', self::$versionPrefix, $this->major, $this->minor, $this->patch);
-    }
-
-    /**
-     * このバージョンのリリースブランチ名を返す
-     *
-     * @return string
-     */
-    public function toReleaseBranchName(): string
-    {
-        return sprintf('%s%s', self::$releaseBranchPrefix, $this->toString());
+        return sprintf('%s%d.%d.%d', $prefix, $this->major, $this->minor, $this->patch);
     }
 }
