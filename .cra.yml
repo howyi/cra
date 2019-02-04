@@ -1,0 +1,12 @@
+name:
+  masterBranch: 'master'
+  versionPrefix: 'v'
+  releaseBranchPrefix: 'release'
+  featureBranchPrefix: 'feature'
+hooks:
+  release:
+    before:
+      - 'composer test'
+    after:
+      - './bin/cra create-github-release ${VERSION} CHANGELOG_${VERSION}.txt'
+      - './bin/cra post-to-release-channel ${VERSION} \"${VERSION}リリースブランチをマージしました\"'
