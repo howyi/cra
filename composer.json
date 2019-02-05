@@ -32,7 +32,8 @@
         "composer/semver": "^1.4",
         "czproject/git-php": "^3.16",
         "howyi/evi": "^1.0",
-        "eloquent/enumeration": ">=5.1.1"
+        "eloquent/enumeration": ">=5.1.1",
+        "php-school/cli-menu": "^3.0"
     },
     "autoload": {
         "psr-4": {
