@@ -1,8 +1,7 @@
-name:
-  masterBranch: 'master'
-  versionPrefix: 'v'
-  releaseBranchPrefix: 'release'
-  featureBranchPrefix: 'feature'
+masterBranch: 'master'
+versionPrefix: 'v'
+releaseBranchPrefix: 'release'
+featureBranchPrefix: 'feature'
 hooks:
   release:
     before:
