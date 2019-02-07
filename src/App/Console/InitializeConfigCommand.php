@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\Builder\CliMenuBuilder;
 
-class InitCommand extends Command
+class InitializeConfigCommand extends Command
 {
     protected function configure()
     {
