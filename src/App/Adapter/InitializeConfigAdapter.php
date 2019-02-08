@@ -7,6 +7,7 @@ use Sasamium\Cra\Core\Port\InitializeConfigPort;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -57,8 +58,14 @@ class InitializeConfigAdapter implements InitializeConfigPort
      */
     public function questionGitService(): GitService
     {
-        // TODO: 選択させる
-        return GitService::GITHUB();
+        $question = new ChoiceQuestion(
+            'Please select Git Service.',
+            ['github', 'gitlab']
+        );
+        $question->setErrorMessage('%s is invalid.');
+
+        $serviceName = $this->questionHelper->ask($this->input, $this->output, $question);
+        return GitService::memberByValue($serviceName);
     }
 
     /**

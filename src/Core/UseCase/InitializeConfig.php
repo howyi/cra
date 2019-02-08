@@ -36,7 +36,9 @@ class InitializeConfig
         $config = [];
 
         $gitService = $this->port->questionGitService();
-        $config[$gitService->value()] = $gitService->defaultConfig();
+        $config['service'][$gitService->value()] = $gitService->defaultConfig();
+
+        // TODO: その他
 
         $this->port->put($configPath, $config);
     }
