@@ -60,7 +60,7 @@ class InitializeConfigAdapter implements InitializeConfigPort
     {
         $question = new ChoiceQuestion(
             'Please select Git Service.',
-            ['github', 'gitlab']
+            [GitService::GITHUB, GitService::GITLAB]
         );
         $question->setErrorMessage('%s is invalid.');
 
