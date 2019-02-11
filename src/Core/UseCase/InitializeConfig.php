@@ -11,7 +11,7 @@ use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
 class InitializeConfig
 {
     /**
-     * @var PrepareReleaseBranchPort
+     * @var InitializeConfigPort
      */
     private $port;
 
