@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Sasamium\Cra\App\Adapter;
+namespace Sasamium\Cra\App\Adapter\GitService;
 
 use Sasamium\Cra\Core\Port\GitServicePort;
 

@@ -3,8 +3,8 @@
 namespace Sasamium\Cra\App;
 
 use Eloquent\Enumeration\AbstractEnumeration;
-use Sasamium\Cra\App\Adapter\GithubAdapter;
-use Sasamium\Cra\App\Adapter\GitlabAdapter;
+use Sasamium\Cra\App\Adapter\GitService\GithubAdapter;
+use Sasamium\Cra\App\Adapter\GitService\GitlabAdapter;
 use Sasamium\Cra\Core\Port\GitServicePort;
 
 /**
