@@ -3,7 +3,6 @@
 namespace Sasamium\Cra\Core\UseCase;
 
 use Sasamium\Cra\Core\Port\InitializeConfigPort;
-use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
 
 /**
  * Configを新規作成する
