@@ -67,10 +67,10 @@ class PrepareReleaseBranchAdapter implements PrepareReleaseBranchPort
         $wipVersions = [];
         foreach ($this->git->getLocalBranches() ?? [] as $branch) {
             $prefixDeleted = preg_replace("[^{$this->releaseBranchPrefix}]", '', $branch);
-            if (Version::isValidString($prefixDeleted) === false) {
+            if (Version::isValidString($prefixDeleted ?? '') === false) {
                 continue;
             }
-            $wipVersions[] = Version::wipFromString($prefixDeleted);
+            $wipVersions[] = Version::wipFromString($prefixDeleted ?? '');
         }
 
         return new SortedVersionList(...$releasedVersions, ...$wipVersions);

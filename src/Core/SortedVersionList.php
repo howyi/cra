@@ -13,7 +13,7 @@ class SortedVersionList implements \IteratorAggregate
     private $versions = [];
 
     /**
-     * @param Version[] $versions
+     * @param array<int, Version> $versions
      */
     public function __construct(Version ...$versions)
     {
