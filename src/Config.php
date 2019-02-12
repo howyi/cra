@@ -6,6 +6,10 @@ use Howyi\Evi;
 
 /**
  * Config
+ *
+ * @method static string masterBranch()
+ * @method static string versionPrefix()
+ * @method static string releaseBranchPrefix()
  */
 class Config
 {

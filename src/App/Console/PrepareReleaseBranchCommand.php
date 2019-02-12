@@ -4,6 +4,7 @@ namespace Sasamium\Cra\App\Console;
 
 use Cz\Git\GitRepository;
 use Sasamium\Cra\App\Adapter\PrepareReleaseBranchAdapter;
+use Sasamium\Cra\Config;
 use Sasamium\Cra\Core\ReleaseType;
 use Sasamium\Cra\Core\UseCase\PrepareReleaseBranch;
 use Sasamium\Cra\Core\Version;
@@ -35,21 +36,34 @@ class PrepareReleaseBranchCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // configureでデフォルト値を指定しているため、必ずstringが返る
+        /** @var string $configPath */
+        $configPath = $input->getOption('config');
+        Config::set($configPath);
+
+        $adapter = new PrepareReleaseBranchAdapter(
+            new GitRepository(getcwd()),
+            Config::releaseBranchPrefix(),
+            Config::versionPrefix(),
+            Config::masterBranch()
+        );
+        $useCase = new PrepareReleaseBranch($adapter);
+
         // configureでREQUIREDしているため、必ずstringが返る
         /** @var string $releaseTypeOrVersion */
         $releaseTypeOrVersion = $input->getArgument('New version');
         $releaseType = ReleaseType::memberByValueWithDefault($releaseTypeOrVersion, null);
-        if (is_null($releaseType)) {
-            if (Version::isValidString($releaseTypeOrVersion)) {
-                throw new \RuntimeException('バージョン指定での準備はまだサポートされていない');
-            }
-            throw new \RuntimeException('不正なリリースタイプを渡された');
+        if (is_null($releaseType) === false) {
+            $useCase->byReleaseType($releaseType);
+            return;
         }
 
-        // TODO: 844196 設定を参照するようにする
-        $adapter = new PrepareReleaseBranchAdapter(new GitRepository(getcwd()), 'release/', 'v', 'master');
-        $useCase = new PrepareReleaseBranch($adapter);
+        if (Version::isValidString($releaseTypeOrVersion)) {
+            $version = Version::wipFromString($releaseTypeOrVersion);
+            $useCase->byVersion($version);
+            return;
+        }
 
-        $useCase->run($releaseType);
+        throw new \RuntimeException(sprintf('不正なリリースタイプ、もしくはバージョン番号を渡された: %s', $releaseTypeOrVersion));
     }
 }
