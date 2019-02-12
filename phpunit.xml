@@ -5,6 +5,7 @@
          beStrictAboutCoversAnnotation="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
+         colors="true"
          verbose="true">
     <testsuite>
         <directory suffix="Test.php">./tests</directory>
@@ -21,5 +22,6 @@
 
     <logging>
         <log type="coverage-html" target="build/log/"/>
+        <log type="coverage-text" target="php://stdout" showOnlySummary="true" showUncoveredFiles="false"/>
     </logging>
 </phpunit>
