@@ -10,6 +10,11 @@ use Howyi\Evi;
 class Config
 {
     /**
+     * @var string
+     */
+    public const DAFAULT_PATH = '.cra.yml';
+
+    /**
      * @var array|null
      */
     private static $config = null;
