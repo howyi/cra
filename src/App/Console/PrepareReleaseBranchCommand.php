@@ -52,6 +52,8 @@ class PrepareReleaseBranchCommand extends Command
         // configureでREQUIREDしているため、必ずstringが返る
         /** @var string $releaseTypeOrVersion */
         $releaseTypeOrVersion = $input->getArgument('New version');
+
+        /** @var ReleaseType|null $releaseType */
         $releaseType = ReleaseType::memberByValueWithDefault($releaseTypeOrVersion, null);
         if (is_null($releaseType) === false) {
             $useCase->byReleaseType($releaseType);

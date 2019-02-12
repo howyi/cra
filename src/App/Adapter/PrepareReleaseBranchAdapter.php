@@ -3,7 +3,6 @@
 namespace Sasamium\Cra\App\Adapter;
 
 use Cz\Git\IGit;
-use Sasamium\Cra\App\SortedVersionListImpl;
 use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
 use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\SortedVersionList;
@@ -68,10 +67,10 @@ class PrepareReleaseBranchAdapter implements PrepareReleaseBranchPort
         $wipVersions = [];
         foreach ($this->git->getLocalBranches() ?? [] as $branch) {
             $prefixDeleted = preg_replace("[^{$this->releaseBranchPrefix}]", '', $branch);
-            if (Version::isValidString($prefixDeleted) === false) {
+            if (Version::isValidString($prefixDeleted ?? '') === false) {
                 continue;
             }
-            $wipVersions[] = Version::wipFromString($prefixDeleted);
+            $wipVersions[] = Version::wipFromString($prefixDeleted ?? '');
         }
 
         return new SortedVersionList(...$releasedVersions, ...$wipVersions);

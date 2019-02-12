@@ -2,10 +2,10 @@
 
 namespace Sasamium\Cra\Core\UseCase;
 
-use Sasamium\Cra\Core\Version;
-use Sasamium\Cra\Core\ReleaseType;
-use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
+use Sasamium\Cra\Core\ReleaseBranch;
+use Sasamium\Cra\Core\ReleaseType;
+use Sasamium\Cra\Core\Version;
 
 /**
  * リリースブランチを用意する

@@ -1,0 +1,8 @@
+parameters:
+  level: 7
+  autoload_files:
+    - %currentWorkingDirectory%/vendor/autoload.php
+  paths:
+    - %currentWorkingDirectory%/src/
+  excludes_analyse:
+    - %currentWorkingDirectory%/tests/
