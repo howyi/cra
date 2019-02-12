@@ -2,14 +2,10 @@
 
 namespace Sasamium\Cra\App\Adapter;
 
-use Cz\Git\IGit;
 use Howyi\Evi;
 use Mockery as M;
 use PHPUnit\Framework\TestCase;
 use Sasamium\Cra\App\GitService;
-use Sasamium\Cra\Core\ReleaseBranch;
-use Sasamium\Cra\Core\SortedVersionList;
-use Sasamium\Cra\Core\Version;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

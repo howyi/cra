@@ -3,7 +3,6 @@
 namespace Sasamium\Cra\App\Adapter;
 
 use Cz\Git\IGit;
-use Sasamium\Cra\App\SortedVersionListImpl;
 use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
 use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\SortedVersionList;
