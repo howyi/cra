@@ -16,7 +16,9 @@ class ReleaseBranchTest extends TestCase
         $this->assertFalse($branch123A->equals($branch124));
 
         $this->assertSame('1.2.3', $branch123A->toString());
-        $this->assertSame('release/v1.2.3', $branch123A->toString('release/', 'v'));
+        $this->assertSame('v1.2.3', $branch123A->toString('', 'v'));
+        $this->assertSame('release/1.2.3', $branch123A->toString('release'));
+        $this->assertSame('release/v1.2.3', $branch123A->toString('release', 'v'));
     }
 
     /**

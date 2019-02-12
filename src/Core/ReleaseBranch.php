@@ -8,6 +8,11 @@ namespace Sasamium\Cra\Core;
 class ReleaseBranch
 {
     /**
+     * @var string
+     */
+    public const BRANCH_SEPARATOR = '/';
+
+    /**
      * @var Version
      */
     private $version;
@@ -58,6 +63,10 @@ class ReleaseBranch
      */
     public function toString(string $branchPrefix = '', string $versionPrefix = ''): string
     {
-        return sprintf('%s%s', $branchPrefix, $this->version->toString($versionPrefix));
+        return sprintf(
+            '%s%s',
+            mb_strlen($branchPrefix) === 0 ? '' : $branchPrefix . self::BRANCH_SEPARATOR,
+            $this->version->toString($versionPrefix)
+        );
     }
 }

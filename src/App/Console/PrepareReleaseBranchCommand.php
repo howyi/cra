@@ -4,6 +4,7 @@ namespace Sasamium\Cra\App\Console;
 
 use Cz\Git\GitRepository;
 use Sasamium\Cra\App\Adapter\PrepareReleaseBranchAdapter;
+use Sasamium\Cra\Config;
 use Sasamium\Cra\Core\ReleaseType;
 use Sasamium\Cra\Core\UseCase\PrepareReleaseBranch;
 use Sasamium\Cra\Core\Version;
@@ -35,6 +36,11 @@ class PrepareReleaseBranchCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // configureでデフォルト値を指定しているため、必ずstringが返る
+        /** @var string $configPath */
+        $configPath = $input->getOption('config');
+        Config::set($configPath);
+
         // configureでREQUIREDしているため、必ずstringが返る
         /** @var string $releaseTypeOrVersion */
         $releaseTypeOrVersion = $input->getArgument('New version');
@@ -46,8 +52,12 @@ class PrepareReleaseBranchCommand extends Command
             throw new \RuntimeException('不正なリリースタイプを渡された');
         }
 
-        // TODO: 844196 設定を参照するようにする
-        $adapter = new PrepareReleaseBranchAdapter(new GitRepository(getcwd()), 'release/', 'v', 'master');
+        $adapter = new PrepareReleaseBranchAdapter(
+            new GitRepository(getcwd()),
+            Config::releaseBranchPrefix(),
+            Config::versionPrefix(),
+            Config::masterBranch()
+        );
         $useCase = new PrepareReleaseBranch($adapter);
 
         $useCase->run($releaseType);
