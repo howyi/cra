@@ -28,7 +28,7 @@ class PrepareReleaseBranch
     /**
      * @param ReleaseType $releaseType
      */
-    public function run(ReleaseType $releaseType): void
+    public function byReleaseType(ReleaseType $releaseType): void
     {
         $latest = $this->port->listUpAllVersion()
             ->released()
@@ -38,5 +38,13 @@ class PrepareReleaseBranch
         $releaseBranch = ReleaseBranch::of($releaseVersion);
 
         $this->port->checkoutBranch($releaseBranch);
+    }
+
+    /**
+     * @param Version $version
+     */
+    public function byVersion(Version $version): void
+    {
+        $this->port->checkoutBranch(ReleaseBranch::of($version));
     }
 }

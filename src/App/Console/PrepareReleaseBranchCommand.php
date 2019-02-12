@@ -41,17 +41,6 @@ class PrepareReleaseBranchCommand extends Command
         $configPath = $input->getOption('config');
         Config::set($configPath);
 
-        // configureでREQUIREDしているため、必ずstringが返る
-        /** @var string $releaseTypeOrVersion */
-        $releaseTypeOrVersion = $input->getArgument('New version');
-        $releaseType = ReleaseType::memberByValueWithDefault($releaseTypeOrVersion, null);
-        if (is_null($releaseType)) {
-            if (Version::isValidString($releaseTypeOrVersion)) {
-                throw new \RuntimeException('バージョン指定での準備はまだサポートされていない');
-            }
-            throw new \RuntimeException('不正なリリースタイプを渡された');
-        }
-
         $adapter = new PrepareReleaseBranchAdapter(
             new GitRepository(getcwd()),
             Config::releaseBranchPrefix(),
@@ -60,6 +49,21 @@ class PrepareReleaseBranchCommand extends Command
         );
         $useCase = new PrepareReleaseBranch($adapter);
 
-        $useCase->run($releaseType);
+        // configureでREQUIREDしているため、必ずstringが返る
+        /** @var string $releaseTypeOrVersion */
+        $releaseTypeOrVersion = $input->getArgument('New version');
+        $releaseType = ReleaseType::memberByValueWithDefault($releaseTypeOrVersion, null);
+        if (is_null($releaseType) === false) {
+            $useCase->byReleaseType($releaseType);
+            return;
+        }
+
+        if (Version::isValidString($releaseTypeOrVersion)) {
+            $version = Version::wipFromString($releaseTypeOrVersion);
+            $useCase->byVersion($version);
+            return;
+        }
+
+        throw new \RuntimeException(sprintf('不正なリリースタイプ、もしくはバージョン番号を渡された: %s', $releaseTypeOrVersion));
     }
 }

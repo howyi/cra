@@ -26,7 +26,7 @@ class PrepareReleaseBranchTest extends TestCase
         M::close();
     }
 
-    public function createBranchPatternDataProvider()
+    public function prepareBranchByReleaseTypePatternDataProvider()
     {
         $releaseType = ReleaseType::MAJOR();
         return [
@@ -44,9 +44,9 @@ class PrepareReleaseBranchTest extends TestCase
     }
 
     /**
-     * @dataProvider createBranchPatternDataProvider
+     * @dataProvider prepareBranchByReleaseTypePatternDataProvider
      */
-    public function testCreateBranch(
+    public function testPrepareBranchByReleaseType(
         SortedVersionList $versions,
         ReleaseType $releaseType,
         ReleaseBranch $expectedReleaseBranch
@@ -63,6 +63,21 @@ class PrepareReleaseBranchTest extends TestCase
             }))
             ->andReturnNull();
 
-        $this->assertNull($this->useCase->run($releaseType));
+        $this->assertNull($this->useCase->byReleaseType($releaseType));
+    }
+
+    public function testPrepareBranchByVersion()
+    {
+        $version = Version::wip(1, 0, 0);
+        $expectedReleaseBranch = ReleaseBranch::of($version);
+
+        $this->port->shouldReceive('checkoutBranch')
+            ->once()
+            ->with(M::on(function ($given) use ($expectedReleaseBranch) {
+                return $expectedReleaseBranch->equals($given);
+            }))
+            ->andReturnNull();
+
+        $this->assertNull($this->useCase->byVersion($version));
     }
 }
