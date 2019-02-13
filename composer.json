@@ -7,6 +7,11 @@
         {
             "name":  "Hayashi Takuya",
             "email": "qrbys@outlook.com"
+        },
+        {
+            "name":     "namae",
+            "email":    "me-ru",
+            "homepage": "ho-mupe-ji"
         }
     ],
     "scripts": {
