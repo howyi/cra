@@ -5,7 +5,7 @@ namespace Sasamium\Cra\Core\Port;
 use Sasamium\Cra\App\GitService;
 
 /**
- * InitializeConfigBranchPort
+ * InitializeConfigPort
  */
 interface InitializeConfigPort
 {

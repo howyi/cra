@@ -16,7 +16,7 @@ class Config
     /**
      * @var string
      */
-    public const DAFAULT_PATH = '.cra.yml';
+    public const DEFAULT_PATH = '.cra.yml';
 
     /**
      * @var array|null

@@ -18,7 +18,7 @@ class InitializeConfigCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configPath = getcwd() . DIRECTORY_SEPARATOR . Config::DAFAULT_PATH;
+        $configPath = getcwd() . DIRECTORY_SEPARATOR . Config::DEFAULT_PATH;
 
         $adapter = new InitializeConfigAdapter(
             $input,
