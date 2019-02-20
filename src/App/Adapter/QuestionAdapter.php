@@ -2,34 +2,32 @@
 
 namespace Sasamium\Cra\App\Adapter;
 
-use Sasamium\Cra\App\GitService;
-use Sasamium\Cra\Core\Port\InitializeConfigPort;
+use Sasamium\Cra\Core\Port\QuestionPort;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Yaml\Yaml;
 
 /**
- * InitializeConfigPortの実装
+ * QuestionAdapter
  */
-class InitializeConfigAdapter implements InitializeConfigPort
+class QuestionAdapter implements QuestionPort
 {
     /**
      * @var InputInterface
      */
     private $input;
-
+    
     /**
      * @var OutputInterface
      */
     private $output;
-
+    
     /**
      * @var QuestionHelper
      */
     private $questionHelper;
-
+    
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
@@ -44,35 +42,18 @@ class InitializeConfigAdapter implements InitializeConfigPort
         $this->output = $output;
         $this->questionHelper = $questionHelper;
     }
-
+    
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function exists(string $path): bool
+    public function select(string $question, array $choices)
     {
-        return file_exists($path);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function questionGitService(): GitService
-    {
-        $question = new ChoiceQuestion(
-            'Please select Git Service.',
-            [GitService::GITHUB, GitService::GITLAB]
+        $choiceQuestion = new ChoiceQuestion($question, $choices);
+        $choiceQuestion->setErrorMessage('%s is invalid.');
+        return $this->questionHelper->ask(
+            $this->input,
+            $this->output,
+            $choiceQuestion
         );
-        $question->setErrorMessage('%s is invalid.');
-
-        $serviceName = $this->questionHelper->ask($this->input, $this->output, $question);
-        return GitService::memberByValue($serviceName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function put(string $configPath, array $config): void
-    {
-        file_put_contents($configPath, Yaml::dump($config));
     }
 }

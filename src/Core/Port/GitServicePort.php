@@ -7,5 +7,13 @@ namespace Sasamium\Cra\Core\Port;
  */
 interface GitServicePort
 {
-    // TODO
+    /**
+     * @return string
+     */
+    public function name(): string;
+    
+    /**
+     * @return array
+     */
+    public function defaultConfig(): array;
 }

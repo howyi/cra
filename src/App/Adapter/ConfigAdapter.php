@@ -3,6 +3,8 @@
 namespace Sasamium\Cra\App\Adapter;
 
 use Howyi\Evi;
+use Sasamium\Cra\App\Adapter\GitService\GithubAdapter;
+use Sasamium\Cra\App\Adapter\GitService\GitlabAdapter;
 use Sasamium\Cra\Core\Port\ConfigPort;
 
 /**
@@ -19,41 +21,70 @@ class ConfigAdapter implements ConfigPort
      * @var array|null
      */
     private $config = null;
+    
+    public function __construct()
+    {
+        $this->config = null;
+    }
 
     /**
      * @param string $path
      * @throws \RuntimeException
      */
-    public function __construct(
-        string $path
-    ) {
-        if (file_exists($path) === false) {
-            throw new \RuntimeException('File not exists: ' . $path);
+    public function set(string $path): void
+    {
+        if (!is_null($this->config)) {
+            throw new \RuntimeException('Config already loaded.');
         }
         $this->config = Evi::parse($path, true);
     }
 
     /**
+     * @param string $key
      * @return string
+     * @throws \RuntimeException
+     */
+    private function loadString(string $key): string
+    {
+        if (is_null($this->config)) {
+            throw new \RuntimeException('Config not loaded.');
+        }
+        return $this->config[$key];
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function masterBranch(): string
     {
-        return $this->config['masterBranch'];
+        return $this->loadString('masterBranch');
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function versionPrefix(): string
     {
-        return $this->config['versionPrefix'];
+        return $this->loadString('versionPrefix');
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function releaseBranchPrefix(): string
     {
-        return $this->config['releaseBranchPrefix'];
+        return $this->loadString('releaseBranchPrefix');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportedGitServicePorts(): array
+    {
+        // TODO: howyi
+        return [
+            '3' => new GithubAdapter(),
+            '4' => new GitlabAdapter(),
+        ];
     }
 }

@@ -9,4 +9,23 @@ use Sasamium\Cra\Core\Port\GitServicePort;
  */
 class GitlabAdapter implements GitServicePort
 {
+    /**
+     * @return string
+     */
+    public function name(): string
+    {
+        // TODO
+        return 'gitlab';
+    }
+
+    /**
+     * @return array
+     */
+    public function defaultConfig(): array
+    {
+        // TODO
+        return [
+            'TOKEN' => 'env:GITLAB_TOKEN',
+        ];
+    }
 }

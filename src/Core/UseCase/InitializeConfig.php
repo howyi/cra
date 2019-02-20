@@ -2,7 +2,9 @@
 
 namespace Sasamium\Cra\Core\UseCase;
 
-use Sasamium\Cra\Core\Port\InitializeConfigPort;
+use Sasamium\Cra\Core\Port\ConfigPort;
+use Sasamium\Cra\Core\Port\QuestionPort;
+use Sasamium\Cra\Core\Port\StoragePort;
 
 /**
  * Configを新規作成する
@@ -10,16 +12,33 @@ use Sasamium\Cra\Core\Port\InitializeConfigPort;
 class InitializeConfig
 {
     /**
-     * @var InitializeConfigPort
+     * @var ConfigPort
      */
-    private $port;
+    private $config;
+    
+    /**
+     * @var StoragePort
+     */
+    private $storage;
+    
+    /**
+     * @var QuestionPort
+     */
+    private $question;
 
     /**
-     * @param InitializeConfigPort $port
+     * @param ConfigPort   $config
+     * @param StoragePort  $storage
+     * @param QuestionPort $question
      */
-    public function __construct(InitializeConfigPort $port)
-    {
-        $this->port = $port;
+    public function __construct(
+        ConfigPort $config,
+        StoragePort $storage,
+        QuestionPort $question
+    ) {
+        $this->config = $config;
+        $this->storage = $storage;
+        $this->question = $question;
     }
 
     /**
@@ -28,17 +47,27 @@ class InitializeConfig
      */
     public function run(string $configPath): void
     {
-        if ($this->port->exists($configPath)) {
+        if ($this->storage->exists($configPath)) {
             throw new \RuntimeException('File already exists: ' . $configPath);
         }
-
+        
         $config = [];
-
-        $gitService = $this->port->questionGitService();
-        $config['service'][$gitService->value()] = $gitService->defaultConfig();
+        
+        $gitServicePorts = $this->config->supportedGitServicePorts();
+        
+        $choices = [];
+        foreach ($gitServicePorts as $port) {
+            $choices[$port->name()] = $port;
+        }
+        $answer = $this->question->select(
+            'Please select Git Service.',
+            array_keys($choices)
+        );
+        $gitServicePort = $choices[$answer];
+        $config['service'][$gitServicePort->name()] = $gitServicePort->defaultConfig();
 
         // TODO: その他
-
-        $this->port->put($configPath, $config);
+        
+        $this->storage->putFromArray($configPath, $config);
     }
 }

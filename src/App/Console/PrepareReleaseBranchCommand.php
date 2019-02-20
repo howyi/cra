@@ -40,7 +40,8 @@ class PrepareReleaseBranchCommand extends Command
         // configureでデフォルト値を指定しているため、必ずstringが返る
         /** @var string $configPath */
         $configPath = $input->getOption('config');
-        $configAdapter = new ConfigAdapter($configPath);
+        $configAdapter = new ConfigAdapter();
+        $configAdapter->set($configPath);
 
         $adapter = new GitAdapter(new GitRepository(getcwd()));
         $useCase = new PrepareReleaseBranch($adapter);

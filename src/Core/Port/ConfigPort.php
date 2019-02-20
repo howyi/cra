@@ -21,4 +21,9 @@ interface ConfigPort
      * @return string
      */
     public function releaseBranchPrefix(): string;
+
+    /**
+     * @return GitServicePort[]
+     */
+    public function supportedGitServicePorts(): array;
 }

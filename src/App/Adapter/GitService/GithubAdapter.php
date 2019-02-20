@@ -9,4 +9,22 @@ use Sasamium\Cra\Core\Port\GitServicePort;
  */
 class GithubAdapter implements GitServicePort
 {
+    /**
+     * @return string
+     */
+    public function name(): string
+    {
+        // TODO
+        return 'github';
+    }
+
+    /**
+     * @return array
+     */
+    public function defaultConfig(): array
+    {
+        return [
+            'TOKEN' => 'env:GITHUB_TOKEN',
+        ];
+    }
 }
