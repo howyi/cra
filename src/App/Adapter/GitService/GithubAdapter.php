@@ -10,16 +10,15 @@ use Sasamium\Cra\Core\Port\GitServicePort;
 class GithubAdapter implements GitServicePort
 {
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function name(): string
     {
-        // TODO
         return 'github';
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function defaultConfig(): array
     {

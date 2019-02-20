@@ -11,8 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 class FilesystemAdapter implements StoragePort
 {
     /**
-     * @param string $path
-     * @return bool
+     * {@inheritdoc}
      */
     public function exists(string $path): bool
     {
@@ -20,8 +19,7 @@ class FilesystemAdapter implements StoragePort
     }
 
     /**
-     * @param string $path
-     * @param array  $content
+     * {@inheritdoc}
      */
     public function putFromArray(string $path, array $content): void
     {

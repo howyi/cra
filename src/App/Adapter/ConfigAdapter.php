@@ -21,7 +21,7 @@ class ConfigAdapter implements ConfigPort
      * @var array|null
      */
     private $config = null;
-    
+
     public function __construct()
     {
         $this->config = null;

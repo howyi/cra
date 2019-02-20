@@ -17,17 +17,17 @@ class QuestionAdapter implements QuestionPort
      * @var InputInterface
      */
     private $input;
-    
+
     /**
      * @var OutputInterface
      */
     private $output;
-    
+
     /**
      * @var QuestionHelper
      */
     private $questionHelper;
-    
+
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
@@ -42,7 +42,7 @@ class QuestionAdapter implements QuestionPort
         $this->output = $output;
         $this->questionHelper = $questionHelper;
     }
-    
+
     /**
      * {@inheritdoc}
      */
