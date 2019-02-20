@@ -2,9 +2,10 @@
 
 namespace Sasamium\Cra\Core\UseCase;
 
-use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
+use Sasamium\Cra\Core\Port\GitPort;
 use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\ReleaseType;
+use Sasamium\Cra\Core\SortedVersionList;
 use Sasamium\Cra\Core\Version;
 
 /**
@@ -13,16 +14,16 @@ use Sasamium\Cra\Core\Version;
 class PrepareReleaseBranch
 {
     /**
-     * @var PrepareReleaseBranchPort
+     * @var GitPort
      */
-    private $port;
+    private $git;
 
     /**
-     * @param PrepareReleaseBranchPort $port
+     * @param GitPort $git
      */
-    public function __construct(PrepareReleaseBranchPort $port)
+    public function __construct(GitPort $git)
     {
-        $this->port = $port;
+        $this->git = $git;
     }
 
     /**
@@ -30,14 +31,18 @@ class PrepareReleaseBranch
      */
     public function byReleaseType(ReleaseType $releaseType): void
     {
-        $latest = $this->port->listUpAllVersion()
-            ->released()
-            ->latestOrElse(Version::initial());
+        $releasedVersions = [];
+        foreach ($this->git->listUpTags() as $tag) {
+            if (Version::isValidString($tag) === false) {
+                continue;
+            }
+            $releasedVersions[] = Version::releasedFromString($tag);
+        }
 
-        $releaseVersion = $latest->increment($releaseType);
-        $releaseBranch = ReleaseBranch::of($releaseVersion);
+        $latestVersion = (new SortedVersionList(...$releasedVersions))->latestOrElse(Version::initial());
+        $releaseVersion = $latestVersion->increment($releaseType);
 
-        $this->port->checkoutBranch($releaseBranch);
+        $this->byVersion($releaseVersion);
     }
 
     /**
@@ -45,6 +50,8 @@ class PrepareReleaseBranch
      */
     public function byVersion(Version $version): void
     {
-        $this->port->checkoutBranch(ReleaseBranch::of($version));
+        // TODO: 844196 configAdapterを参照するようにする
+        $this->git->checkout('master');
+        $this->git->createBranch(ReleaseBranch::of($version)->toString('release', 'v'));
     }
 }

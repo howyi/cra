@@ -4,21 +4,20 @@ namespace Sasamium\Cra\Core\UseCase;
 
 use Mockery as M;
 use PHPUnit\Framework\TestCase;
-use Sasamium\Cra\Core\Port\PrepareReleaseBranchPort;
+use Sasamium\Cra\Core\Port\GitPort;
 use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\ReleaseType;
-use Sasamium\Cra\Core\SortedVersionList;
 use Sasamium\Cra\Core\Version;
 
 class PrepareReleaseBranchTest extends TestCase
 {
-    private $port;
+    private $git;
     private $useCase;
 
     public function setup()
     {
-        $this->port = M::mock(PrepareReleaseBranchPort::class);
-        $this->useCase = new PrepareReleaseBranch($this->port);
+        $this->git = M::mock(GitPort::class);
+        $this->useCase = new PrepareReleaseBranch($this->git);
     }
 
     public function teardown()
@@ -26,41 +25,41 @@ class PrepareReleaseBranchTest extends TestCase
         M::close();
     }
 
-    public function prepareBranchByReleaseTypePatternDataProvider()
+    public function tagDataProvider()
     {
-        $releaseType = ReleaseType::MAJOR();
         return [
-            'リリース済みバージョンが存在する' => [
-                new SortedVersionList(Version::released(1, 0, 0)),
-                $releaseType,
-                ReleaseBranch::of(Version::released(1, 0, 0)->increment($releaseType)),
+            [
+                ['foo'],
+                Version::wip(0, 1, 0),
             ],
-            'リリース済みバージョンが存在しない' => [
-                new SortedVersionList(),
-                $releaseType,
-                ReleaseBranch::of(Version::initial()->increment($releaseType)),
+            [
+                ['foo', 'v1.0.0', 'v1.0.1'],
+                Version::wip(1, 1, 0),
             ],
         ];
     }
 
     /**
-     * @dataProvider prepareBranchByReleaseTypePatternDataProvider
+     * @dataProvider tagDataProvider
      */
-    public function testPrepareBranchByReleaseType(
-        SortedVersionList $versions,
-        ReleaseType $releaseType,
-        ReleaseBranch $expectedReleaseBranch
-    ) {
-        $this->port->shouldReceive('listUpAllVersion')
+    public function testPrepareBranchByReleaseType(array $tags, Version $expectedReleaseVersion)
+    {
+        $releaseType = ReleaseType::MINOR();
+
+        $this->git->shouldReceive('listUpTags')
             ->once()
             ->withNoArgs()
-            ->andReturn($versions);
+            ->andReturn($tags);
 
-        $this->port->shouldReceive('checkoutBranch')
+        $this->git->shouldReceive('checkout')
             ->once()
-            ->with(M::on(function ($given) use ($expectedReleaseBranch) {
-                return $expectedReleaseBranch->equals($given);
-            }))
+            ->with('master')
+            ->andReturnNull();
+
+        $expectedReleaseBranchName = ReleaseBranch::of($expectedReleaseVersion)->toString('release', 'v');
+        $this->git->shouldReceive('createBranch')
+            ->once()
+            ->with($expectedReleaseBranchName)
             ->andReturnNull();
 
         $this->assertNull($this->useCase->byReleaseType($releaseType));
@@ -69,13 +68,16 @@ class PrepareReleaseBranchTest extends TestCase
     public function testPrepareBranchByVersion()
     {
         $version = Version::wip(1, 0, 0);
-        $expectedReleaseBranch = ReleaseBranch::of($version);
+        $expectedReleaseBranchName = ReleaseBranch::of($version)->toString('release', 'v');
 
-        $this->port->shouldReceive('checkoutBranch')
+        $this->git->shouldReceive('checkout')
             ->once()
-            ->with(M::on(function ($given) use ($expectedReleaseBranch) {
-                return $expectedReleaseBranch->equals($given);
-            }))
+            ->with('master')
+            ->andReturnNull();
+
+        $this->git->shouldReceive('createBranch')
+            ->once()
+            ->with($expectedReleaseBranchName)
             ->andReturnNull();
 
         $this->assertNull($this->useCase->byVersion($version));
