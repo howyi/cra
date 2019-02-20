@@ -81,10 +81,9 @@ class ConfigAdapter implements ConfigPort
      */
     public function supportedGitServicePorts(): array
     {
-        // TODO: howyi
         return [
-            '3' => new GithubAdapter(),
-            '4' => new GitlabAdapter(),
+            new GithubAdapter(),
+            new GitlabAdapter(),
         ];
     }
 }
