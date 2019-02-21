@@ -7,4 +7,5 @@ namespace Sasamium\Cra\Core\Port;
  */
 interface GitServicePort
 {
+    // TODO
 }

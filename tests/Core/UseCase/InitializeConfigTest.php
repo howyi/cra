@@ -4,15 +4,20 @@ namespace Sasamium\Cra\Core\UseCase;
 
 use Mockery as M;
 use PHPUnit\Framework\TestCase;
-use Sasamium\Cra\App\GitService;
-use Sasamium\Cra\Core\Port\InitializeConfigPort;
+use Sasamium\Cra\Core\Port\QuestionPort;
+use Sasamium\Cra\Core\Port\StoragePort;
 
 class InitializeConfigTest extends TestCase
 {
     /**
      * @var M\MockInterface
      */
-    private $port;
+    private $storage;
+
+    /**
+     * @var M\MockInterface
+     */
+    private $question;
 
     /**
      * @var InitializeConfig
@@ -21,8 +26,12 @@ class InitializeConfigTest extends TestCase
 
     public function setup()
     {
-        $this->port = M::mock(InitializeConfigPort::class);
-        $this->useCase = new InitializeConfig($this->port);
+        $this->storage = M::mock(StoragePort::class);
+        $this->question = M::mock(QuestionPort::class);
+        $this->useCase = new InitializeConfig(
+            $this->storage,
+            $this->question
+        );
     }
 
     public function teardown()
@@ -34,35 +43,37 @@ class InitializeConfigTest extends TestCase
         M::close();
     }
 
-    public function createConfigDataProvider()
-    {
-        return [GitService::members()];
-    }
-
-    /**
-     * @param GitService $gitService
-     * @dataProvider createConfigDataProvider
-     */
-    public function testCreateConfig(GitService $gitService)
+    public function testCreateConfig()
     {
         $configPath = '/';
-        $this->port->shouldReceive('exists')
+        $this->storage->shouldReceive('exists')
             ->once()
             ->with($configPath)
             ->andReturn(false);
 
-        $this->port->shouldReceive('questionGitService')
-            ->once()
-            ->withNoArgs()
-            ->andReturn($gitService);
-
-        $config = [
-            'service' => [
-                $gitService->value() => $gitService->defaultConfig()
+        $gitServiceDefaultConfig = [
+            'github' => [
+                'TOKEN' => 'env:GITHUB_TOKEN',
+            ],
+            'gitlab' => [
+                'TOKEN' => 'env:GITLAB_TOKEN',
             ],
         ];
 
-        $this->port->shouldReceive('put')
+        $this->question->shouldReceive('select')
+            ->once()
+            ->with(
+                'Please select Git Service.',
+                array_keys($gitServiceDefaultConfig)
+            )
+            ->andReturn($answer = 'github');
+
+        $config['git_service'] = [
+            'name'    => $answer,
+            'setting' => $gitServiceDefaultConfig[$answer],
+        ];
+
+        $this->storage->shouldReceive('putFromArray')
             ->once()
             ->with($configPath, $config)
             ->andReturnNull();
@@ -77,7 +88,7 @@ class InitializeConfigTest extends TestCase
     public function testCreateConfigWhenFileAlreadyExists()
     {
         $configPath = '/';
-        $this->port->shouldReceive('exists')
+        $this->storage->shouldReceive('exists')
             ->once()
             ->with($configPath)
             ->andReturn(true);
