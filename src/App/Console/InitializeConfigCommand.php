@@ -23,7 +23,6 @@ class InitializeConfigCommand extends Command
 
         // output
         $useCase = new InitializeConfig(
-            new ConfigAdapter(),
             new FilesystemAdapter(),
             new QuestionAdapter(
                 $input,

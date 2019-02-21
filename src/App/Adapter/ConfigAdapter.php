@@ -3,8 +3,6 @@
 namespace Sasamium\Cra\App\Adapter;
 
 use Howyi\Evi;
-use Sasamium\Cra\App\Adapter\GitService\GithubAdapter;
-use Sasamium\Cra\App\Adapter\GitService\GitlabAdapter;
 use Sasamium\Cra\Core\Port\ConfigPort;
 
 /**
@@ -22,68 +20,40 @@ class ConfigAdapter implements ConfigPort
      */
     private $config = null;
 
-    public function __construct()
-    {
-        $this->config = null;
-    }
-
     /**
      * @param string $path
      * @throws \RuntimeException
      */
-    public function set(string $path): void
-    {
-        if (!is_null($this->config)) {
-            throw new \RuntimeException('Config already loaded.');
+    public function __construct(
+        string $path
+    ) {
+        if (file_exists($path) === false) {
+            throw new \RuntimeException('File not exists: ' . $path);
         }
         $this->config = Evi::parse($path, true);
     }
 
     /**
-     * @param string $key
      * @return string
-     * @throws \RuntimeException
-     */
-    private function loadString(string $key): string
-    {
-        if (is_null($this->config)) {
-            throw new \RuntimeException('Config not loaded.');
-        }
-        return $this->config[$key];
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function masterBranch(): string
     {
-        return $this->loadString('masterBranch');
+        return $this->config['masterBranch'];
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function versionPrefix(): string
     {
-        return $this->loadString('versionPrefix');
+        return $this->config['versionPrefix'];
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function releaseBranchPrefix(): string
     {
-        return $this->loadString('releaseBranchPrefix');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportedGitServicePorts(): array
-    {
-        return [
-            new GithubAdapter(),
-            new GitlabAdapter(),
-        ];
+        return $this->config['releaseBranchPrefix'];
     }
 }
