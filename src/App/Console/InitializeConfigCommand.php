@@ -2,8 +2,9 @@
 
 namespace Sasamium\Cra\App\Console;
 
-use Sasamium\Cra\App\Adapter\InitializeConfigAdapter;
-use Sasamium\Cra\Config;
+use Sasamium\Cra\App\Adapter\ConfigAdapter;
+use Sasamium\Cra\App\Adapter\QuestionAdapter;
+use Sasamium\Cra\App\Adapter\Storage\FilesystemAdapter;
 use Sasamium\Cra\Core\UseCase\InitializeConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,14 +19,17 @@ class InitializeConfigCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configPath = getcwd() . DIRECTORY_SEPARATOR . Config::DEFAULT_PATH;
+        $configPath = getcwd() . DIRECTORY_SEPARATOR . ConfigAdapter::DEFAULT_PATH;
 
-        $adapter = new InitializeConfigAdapter(
-            $input,
-            $output,
-            $this->getHelper('question')
+        // output
+        $useCase = new InitializeConfig(
+            new FilesystemAdapter(),
+            new QuestionAdapter(
+                $input,
+                $output,
+                $this->getHelper('question')
+            )
         );
-        $useCase = new InitializeConfig($adapter);
         $useCase->run($configPath);
     }
 }

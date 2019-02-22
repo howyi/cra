@@ -3,8 +3,8 @@
 namespace Sasamium\Cra\App\Console;
 
 use Cz\Git\GitRepository;
+use Sasamium\Cra\App\Adapter\ConfigAdapter;
 use Sasamium\Cra\App\Adapter\GitAdapter;
-use Sasamium\Cra\Config;
 use Sasamium\Cra\Core\ReleaseType;
 use Sasamium\Cra\Core\UseCase\PrepareReleaseBranch;
 use Sasamium\Cra\Core\Version;
@@ -39,7 +39,7 @@ class PrepareReleaseBranchCommand extends Command
         // configureでデフォルト値を指定しているため、必ずstringが返る
         /** @var string $configPath */
         $configPath = $input->getOption('config');
-        Config::set($configPath);
+        $configAdapter = new ConfigAdapter($configPath);
 
         $adapter = new GitAdapter(new GitRepository(getcwd()));
         $useCase = new PrepareReleaseBranch($adapter);
