@@ -4,6 +4,7 @@ namespace Sasamium\Cra\Core\UseCase;
 
 use Mockery as M;
 use PHPUnit\Framework\TestCase;
+use Sasamium\Cra\Core\Port\ConfigPort;
 use Sasamium\Cra\Core\Port\GitPort;
 use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\ReleaseType;
@@ -12,12 +13,14 @@ use Sasamium\Cra\Core\Version;
 class PrepareReleaseBranchTest extends TestCase
 {
     private $git;
+    private $config;
     private $useCase;
 
     public function setup()
     {
         $this->git = M::mock(GitPort::class);
-        $this->useCase = new PrepareReleaseBranch($this->git);
+        $this->config = M::mock(ConfigPort::class);
+        $this->useCase = new PrepareReleaseBranch($this->git, $this->config);
     }
 
     public function teardown()
@@ -46,6 +49,11 @@ class PrepareReleaseBranchTest extends TestCase
     {
         $releaseType = ReleaseType::MINOR();
 
+        $this->config->shouldReceive('masterBranch')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($masterBranch = 'dev');
+
         $this->git->shouldReceive('listUpTags')
             ->once()
             ->withNoArgs()
@@ -53,10 +61,21 @@ class PrepareReleaseBranchTest extends TestCase
 
         $this->git->shouldReceive('checkout')
             ->once()
-            ->with('master')
+            ->with($masterBranch)
             ->andReturnNull();
 
-        $expectedReleaseBranchName = ReleaseBranch::of($expectedReleaseVersion)->toString('release', 'v');
+        $this->config->shouldReceive('releaseBranchPrefix')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($releaseBranchPrefix = 'version');
+        $this->config->shouldReceive('versionPrefix')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($versionPrefix = '');
+        $expectedReleaseBranchName = ReleaseBranch::of($expectedReleaseVersion)->toString(
+            $releaseBranchPrefix,
+            $versionPrefix
+        );
         $this->git->shouldReceive('createBranch')
             ->once()
             ->with($expectedReleaseBranchName)
@@ -68,11 +87,23 @@ class PrepareReleaseBranchTest extends TestCase
     public function testPrepareBranchByVersion()
     {
         $version = Version::wip(1, 0, 0);
-        $expectedReleaseBranchName = ReleaseBranch::of($version)->toString('release', 'v');
+        $this->config->shouldReceive('releaseBranchPrefix')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($releaseBranchPrefix = 'version');
+        $this->config->shouldReceive('versionPrefix')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($versionPrefix = '');
+        $expectedReleaseBranchName = ReleaseBranch::of($version)->toString($releaseBranchPrefix, $versionPrefix);
 
+        $this->config->shouldReceive('masterBranch')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($masterBranch = 'dev');
         $this->git->shouldReceive('checkout')
             ->once()
-            ->with('master')
+            ->with($masterBranch)
             ->andReturnNull();
 
         $this->git->shouldReceive('createBranch')

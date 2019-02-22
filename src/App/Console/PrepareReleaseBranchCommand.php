@@ -41,8 +41,8 @@ class PrepareReleaseBranchCommand extends Command
         $configPath = $input->getOption('config');
         $configAdapter = new ConfigAdapter($configPath);
 
-        $adapter = new GitAdapter(new GitRepository(getcwd()));
-        $useCase = new PrepareReleaseBranch($adapter);
+        $gitAdapter = new GitAdapter(new GitRepository(getcwd()));
+        $useCase = new PrepareReleaseBranch($gitAdapter, $configAdapter);
 
         // configureでREQUIREDしているため、必ずstringが返る
         /** @var string $releaseTypeOrVersion */
