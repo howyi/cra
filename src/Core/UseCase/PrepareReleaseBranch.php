@@ -2,6 +2,7 @@
 
 namespace Sasamium\Cra\Core\UseCase;
 
+use Sasamium\Cra\Core\Port\ConfigPort;
 use Sasamium\Cra\Core\Port\GitPort;
 use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\ReleaseType;
@@ -19,11 +20,18 @@ class PrepareReleaseBranch
     private $git;
 
     /**
-     * @param GitPort $git
+     * @var ConfigPort
      */
-    public function __construct(GitPort $git)
+    private $config;
+
+    /**
+     * @param GitPort    $git
+     * @param ConfigPort $config
+     */
+    public function __construct(GitPort $git, ConfigPort $config)
     {
         $this->git = $git;
+        $this->config = $config;
     }
 
     /**
@@ -50,8 +58,10 @@ class PrepareReleaseBranch
      */
     public function byVersion(Version $version): void
     {
-        // TODO: 844196 configAdapterを参照するようにする
-        $this->git->checkout('master');
-        $this->git->createBranch(ReleaseBranch::of($version)->toString('release', 'v'));
+        $this->git->checkout($this->config->masterBranch());
+        $this->git->createBranch(ReleaseBranch::of($version)->toString(
+            $this->config->releaseBranchPrefix(),
+            $this->config->versionPrefix()
+        ));
     }
 }
