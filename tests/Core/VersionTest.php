@@ -7,23 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class VersionTest extends TestCase
 {
-    public function validStringDataProvider()
-    {
-        return [
-            ['1.2.3', true],
-            ['v1.2.3', true],
-            ['foo', false],
-        ];
-    }
-
-    /**
-     * @dataProvider validStringDataProvider
-     */
-    public function testIsValidString($str, $expected)
-    {
-        $this->assertSame($expected, Version::isValidString($str));
-    }
-
     public function testInitial()
     {
         $version = Version::initial();
