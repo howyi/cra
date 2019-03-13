@@ -6,6 +6,7 @@ use Cz\Git\GitRepository;
 use Sasamium\Cra\App\Adapter\ConfigAdapter;
 use Sasamium\Cra\App\Adapter\GitAdapter;
 use Sasamium\Cra\Core\ReleaseType;
+use Sasamium\Cra\Core\SemverParser;
 use Sasamium\Cra\Core\UseCase\PrepareReleaseBranch;
 use Sasamium\Cra\Core\Version;
 use Symfony\Component\Console\Command\Command;
@@ -55,7 +56,7 @@ class PrepareReleaseBranchCommand extends Command
             return;
         }
 
-        if (Version::isValidString($releaseTypeOrVersion)) {
+        if (SemverParser::isParsable($releaseTypeOrVersion)) {
             $version = Version::wipFromString($releaseTypeOrVersion);
             $useCase->byVersion($version);
             return;

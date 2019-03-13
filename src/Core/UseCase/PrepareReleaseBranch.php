@@ -6,6 +6,7 @@ use Sasamium\Cra\Core\Port\ConfigPort;
 use Sasamium\Cra\Core\Port\GitPort;
 use Sasamium\Cra\Core\ReleaseBranch;
 use Sasamium\Cra\Core\ReleaseType;
+use Sasamium\Cra\Core\SemverParser;
 use Sasamium\Cra\Core\SortedVersionList;
 use Sasamium\Cra\Core\Version;
 
@@ -41,7 +42,7 @@ class PrepareReleaseBranch
     {
         $releasedVersions = [];
         foreach ($this->git->listUpTags() as $tag) {
-            if (Version::isValidString($tag) === false) {
+            if (SemverParser::isParsable($tag) === false) {
                 continue;
             }
             $releasedVersions[] = Version::releasedFromString($tag);

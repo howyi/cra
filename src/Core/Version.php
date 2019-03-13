@@ -10,11 +10,6 @@ use Composer\Semver\Comparator;
 class Version
 {
     /**
-     * @var string
-     */
-    private const SEMVER_PATTERN = '/^v?(\d+)\.(\d+)\.(\d+)/';
-
-    /**
      * @var int
      */
     private $major;
@@ -49,17 +44,6 @@ class Version
     }
 
     /**
-     * 正当なバージョン文字列かを返す
-     *
-     * @param string $str
-     * @return bool
-     */
-    public static function isValidString(string $str): bool
-    {
-        return count(self::parse($str)) > 0;
-    }
-
-    /**
      * 一番最初のバージョンを生成する
      *
      * @return Version
@@ -91,8 +75,8 @@ class Version
      */
     public static function releasedFromString(string $str): Version
     {
-        $parsed = self::parse($str);
-        if (count($parsed) === 0) {
+        $parsed = SemverParser::parse($str);
+        if ($parsed === false) {
             throw new InvalidVersionStringException(sprintf('given: %s', $str));
         }
         return self::released($parsed['major'], $parsed['minor'], $parsed['patch']);
@@ -120,27 +104,11 @@ class Version
      */
     public static function wipFromString(string $str): Version
     {
-        $parsed = self::parse($str);
-        if (count($parsed) === 0) {
+        $parsed = SemverParser::parse($str);
+        if ($parsed === false) {
             throw new InvalidVersionStringException(sprintf('given: %s', $str));
         }
         return self::wip($parsed['major'], $parsed['minor'], $parsed['patch']);
-    }
-
-    /**
-     * 文字列をパースし、正当であれば各セグメントを返す
-     *
-     * @param string $str
-     * @return array ['major' => int, 'minor' => int, 'patch' => int]|[]
-     */
-    private static function parse(string $str): array
-    {
-        $m = [];
-        $result = preg_match(self::SEMVER_PATTERN, $str, $m);
-        if ($result !== 1) {
-            return [];
-        }
-        return ['major' => (int) $m[1], 'minor' => (int) $m[2], 'patch' => (int) $m[3]];
     }
 
     /**
