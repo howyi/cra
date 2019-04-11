@@ -4,6 +4,7 @@ namespace Sasamium\Cra\Core\UseCase;
 
 use Mockery as M;
 use PHPUnit\Framework\TestCase;
+use Sasamium\Cra\Core\Port\DefaultConfigPort;
 use Sasamium\Cra\Core\Port\QuestionPort;
 use Sasamium\Cra\Core\Port\StoragePort;
 
@@ -20,6 +21,11 @@ class InitializeConfigTest extends TestCase
     private $question;
 
     /**
+     * @var M\MockInterface
+     */
+    private $defaultConfig;
+
+    /**
      * @var InitializeConfig
      */
     private $useCase;
@@ -28,9 +34,11 @@ class InitializeConfigTest extends TestCase
     {
         $this->storage = M::mock(StoragePort::class);
         $this->question = M::mock(QuestionPort::class);
+        $this->defaultConfig = M::mock(DefaultConfigPort::class);
         $this->useCase = new InitializeConfig(
             $this->storage,
-            $this->question
+            $this->question,
+            $this->defaultConfig
         );
     }
 
@@ -51,14 +59,17 @@ class InitializeConfigTest extends TestCase
             ->with($configPath)
             ->andReturn(false);
 
-        $gitServiceDefaultConfig = [
-            'github' => [
-                'TOKEN' => 'env:GITHUB_TOKEN',
-            ],
-            'gitlab' => [
-                'TOKEN' => 'env:GITLAB_TOKEN',
-            ],
-        ];
+        $this->defaultConfig->shouldReceive('gitServices')
+            ->once()
+            ->withNoArgs()
+            ->andReturn($gitServiceDefaultConfig = [
+                'github' => [
+                    'TOKEN' => 'env:GITHUB_TOKEN',
+                ],
+                'gitlab' => [
+                    'TOKEN' => 'env:GITLAB_TOKEN',
+                ],
+            ]);
 
         $this->question->shouldReceive('select')
             ->once()

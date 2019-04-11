@@ -3,6 +3,7 @@
 namespace Sasamium\Cra\App\Console;
 
 use Sasamium\Cra\App\Adapter\ConfigAdapter;
+use Sasamium\Cra\App\Adapter\DefaultConfigAdapter;
 use Sasamium\Cra\App\Adapter\QuestionAdapter;
 use Sasamium\Cra\App\Adapter\Storage\FilesystemAdapter;
 use Sasamium\Cra\Core\UseCase\InitializeConfig;
@@ -28,7 +29,8 @@ class InitializeConfigCommand extends Command
                 $input,
                 $output,
                 $this->getHelper('question')
-            )
+            ),
+            new DefaultConfigAdapter()
         );
         $useCase->run($configPath);
     }

@@ -2,6 +2,7 @@
 
 namespace Sasamium\Cra\Core\UseCase;
 
+use Sasamium\Cra\Core\Port\DefaultConfigPort;
 use Sasamium\Cra\Core\Port\QuestionPort;
 use Sasamium\Cra\Core\Port\StoragePort;
 
@@ -21,15 +22,23 @@ class InitializeConfig
     private $question;
 
     /**
-     * @param StoragePort  $storage
-     * @param QuestionPort $question
+     * @var DefaultConfigPort
+     */
+    private $defaultConfig;
+
+    /**
+     * @param StoragePort       $storage
+     * @param QuestionPort      $question
+     * @param DefaultConfigPort $defaultConfig
      */
     public function __construct(
         StoragePort $storage,
-        QuestionPort $question
+        QuestionPort $question,
+        DefaultConfigPort $defaultConfig
     ) {
         $this->storage = $storage;
         $this->question = $question;
+        $this->defaultConfig = $defaultConfig;
     }
 
     /**
@@ -44,14 +53,7 @@ class InitializeConfig
 
         $config = [];
 
-        $gitServiceDefaultConfig = [
-            'github' => [
-                'TOKEN' => 'env:GITHUB_TOKEN',
-            ],
-            'gitlab' => [
-                'TOKEN' => 'env:GITLAB_TOKEN',
-            ],
-        ];
+        $gitServiceDefaultConfig = $this->defaultConfig->gitServices();
 
         $answer = $this->question->select(
             'Please select Git Service.',
@@ -66,5 +68,7 @@ class InitializeConfig
         // TODO: その他
 
         $this->storage->putFromArray($configPath, $config);
+
+        // TODO: ファイルが作成できたよ、みたいな通知
     }
 }
